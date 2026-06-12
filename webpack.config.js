@@ -20,10 +20,10 @@ export default {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: __dirname,
   },
   devServer: {
-    static: './dist',
+    static: __dirname,
     open: true,
   },
   mode: 'development',

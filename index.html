@@ -1,33 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Arcade Game</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grave Escape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            overflow: hidden;
+        :root {
+            --bg-deep: #050905;
+            --bg-panel: rgba(13, 28, 17, 0.94);
+            --line-soft: rgba(123, 255, 171, 0.15);
+            --line-strong: rgba(123, 255, 171, 0.25);
+            --text-main: #d6ffe2;
+            --text-soft: #b7f8c8;
+            --accent: #86ffab;
+            --accent-strong: #d9ffe6;
+            --heading-font: 'Cinzel Decorative', 'Cinzel', serif;
+            --ui-font: 'Cinzel', Georgia, serif;
+            --body-font: 'Cormorant Garamond', Georgia, serif;
         }
-        canvas {
-            display: block;
-            margin: 0 auto;
+        body {
+            background:
+                radial-gradient(circle at top, rgba(80, 255, 160, 0.18), transparent 34%),
+                linear-gradient(180deg, #081109 0%, var(--bg-deep) 100%);
+            color: var(--text-main);
+            font-family: var(--body-font);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
         h1 {
-            margin: 10px 0;
+            margin: 0 0 18px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-family: var(--heading-font);
+            font-size: clamp(2rem, 3vw, 3rem);
+        }
+        #layout {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+            width: min(1320px, 100%);
+        }
+        #sidebar {
+            width: 330px;
+            background: var(--bg-panel);
+            border: 1px solid var(--line-strong);
+            border-radius: 20px;
+            box-shadow: 0 0 28px rgba(0, 255, 136, 0.18);
+            padding: 22px;
+        }
+        .panel-block + .panel-block {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line-soft);
+        }
+        .panel-block h2,
+        .panel-block h3,
+        .panel-block h4 {
+            margin: 0 0 10px;
+            font-family: var(--ui-font);
+            letter-spacing: 0.04em;
+        }
+        .panel-block p,
+        .panel-block li,
+        .panel-block span,
+        .panel-block button {
+            font-family: var(--body-font);
+            font-size: 1.08rem;
+            line-height: 1.35;
+        }
+        .panel-block ul {
+            padding-left: 18px;
+            margin: 8px 0 0;
+        }
+        .mode-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .mode-btn,
+        .skin-buy,
+        .skin-select,
+        #start-btn {
+            border: none;
+            border-radius: 12px;
+            background: var(--accent);
+            color: #081109;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: var(--ui-font);
+            padding: 11px 14px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            box-shadow: 0 8px 18px rgba(50, 255, 160, 0.16);
+        }
+        .mode-btn.active,
+        .skin-select.active {
+            background: var(--accent-strong);
+        }
+        .mode-btn:hover,
+        .skin-buy:hover,
+        .skin-select:hover,
+        #start-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(50, 255, 160, 0.24);
+        }
+        .bank-line,
+        .status-line,
+        .status-mini {
+            margin: 8px 0;
+            color: var(--text-soft);
+        }
+        .status-line {
+            font-size: 1.15rem;
+        }
+        .status-mini,
+        .shop-copy {
+            opacity: 0.92;
+        }
+        .skin-grid {
+            display: grid;
+            gap: 12px;
+        }
+        .skin-card {
+            display: grid;
+            grid-template-columns: 18px 1fr;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(122, 255, 171, 0.07);
+            border: 1px solid rgba(122, 255, 171, 0.1);
+            border-radius: 16px;
+        }
+        .skin-chip {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-top: 4px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .skin-copy p,
+        .skin-copy span {
+            margin: 0;
+            color: #bee9ca;
+            font-size: 1rem;
+        }
+        .skin-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .skin-placeholder {
+            color: #74a783;
+            font-size: 0.85rem;
+            align-self: center;
+        }
+        #stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+        #game-container {
+            box-shadow: 0 0 32px rgba(0, 255, 136, 0.28);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(123, 255, 171, 0.18);
+        }
+        @media (max-width: 1180px) {
+            #layout {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #sidebar {
+                width: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>School Arcade Game</h1>
-    
-    <!-- This loads your game -->
+    <h1>Grave Escape</h1>
+    <div id="layout">
+        <aside id="sidebar"></aside>
+        <div id="stage">
+            <button id="start-btn">Start Game</button>
+            <div id="game-container"></div>
+        </div>
+    </div>
     <script src="bundle.js"></script>
-
 </body>
 </html>
